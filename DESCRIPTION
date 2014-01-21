@@ -1,0 +1,9 @@
+Package: knit2docx
+Title: knit2docx
+Description: Takes Rmd file as input and outputs a MS Word docx document.
+Version: 0.01
+Authors@R: Benjamin Leutner <benjamin.leutner@uni-wuerzburg.de>
+Maintainer: Benjamin Leutner <benjamin.leutner@uni-wuerzburg.de>
+Depends: stringr, knitr, R (>= 3.0.2)
+License: GPL (>=3)
+LazyData: true
