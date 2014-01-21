@@ -2,16 +2,15 @@
 #'  
 #'  Converts Rmd to docx including some sideeffects, such as figure labelling, file renaming etc. Currently settings
 #'  are rather tightly tied to the requirements of pelagic publishing. Also it is not tested on anything else than linux.
-#'  Pandoc and pandoc-citeproc must be installed and in your path. Could be more efficient and less of a hack, but does the job.
+#'  Pandoc and pandoc-citeproc must be installed and in your path. It is not overly beautiful, could be more efficient and less of a hack, but does the job.
 #'  
 #'  @param x character. basename of .Rmd file without extension, e.g. "Chapter1"
 #'  @param out optional. character. basename of output docx file. If not suplied \code{x} will be used.
 #'  @param withBib logical. run pandoc with or without pandoc-citeproc, i.e. with or without resolving citatations to a bibliography
 #'  @param bib character. basename of Bibtex .bib file. Optional if equal to \code{x}. 
 #'  @param style literature formatting style
+#'  @export 
 #'  
-#'  @author Benjamin Leutner \email{benjamin.leutner@@uni-wuerzburg.de}
-#'
 knit2docx <- function(x, out = NULL, withBib = TRUE, bib = NULL,  style = "harvard1_mod.csl"){
 	
 	Rmd     <- paste0(x, ".Rmd")
@@ -24,8 +23,19 @@ knit2docx <- function(x, out = NULL, withBib = TRUE, bib = NULL,  style = "harva
 		if(!file.exists(bib)) stop(paste0(bib, " does not exist!"), call. = FALSE)
 		if(!file.exists(style)) stop(paste0(style, " does not exist!"), call. = FALSE)
 	}
-	require(knitr)
-	require(stringr)
+	
+	## Create figure captions function in local environment
+	caption <- local({
+				figureNr <- 0
+				function(x, label=NA){
+					figureNr <<- figureNr + 1
+					out <- paste0("Fig ", currentChapter,".",figureNr, " ", x)
+					if(!is.na(label)) out <- paste0(out, "<reflab>", label, "<reflab>")
+					return(out)
+				}
+			})
+	
+	
 	## Knit to markdown
 	knit(input = Rmd, output = md)
 	
