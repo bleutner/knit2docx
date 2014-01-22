@@ -150,7 +150,7 @@ knit2docx <- function(x, out = NULL, withBib = TRUE, bib = NULL,  style = "harva
 	}
 	
 	cat("\n\nrunning pandoc with call: ", pcall)  
-	system(pcall, intern = TRUE)
+	system(pcall, intern = FALSE, wait = FALSE)
 	cat("\n",rep("-",20),"\n")
 	message("\nwrote ", x, ".docx")
 	
