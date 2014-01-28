@@ -4,70 +4,70 @@
 #'  are rather tightly tied to the requirements of pelagic publishing. Also it is not tested on anything else than linux.
 #'  Pandoc and pandoc-citeproc must be installed and in your path. It is not overly beautiful, could be more efficient and less of a hack, but does the job.
 #'  
-#'  @param x character. basename of .Rmd file without extension, e.g. "Chapter1"
-#'  @param out optional. character. basename of output docx file. If not suplied \code{x} will be used.
-#'  @param withBib logical. run pandoc with or without pandoc-citeproc, i.e. with or without resolving citatations to a bibliography
-#'  @param bib character. basename of Bibtex .bib file. Optional if equal to \code{x}. 
-#'  @param style literature formatting style
+#'  @param .fileBasename character. basename of .Rmd file without extension, e.g. "Chapter1"
+#'  @param .docxFile optional. character. basename of output docx file. If not suplied \code{x} will be used.
+#'  @param .withBibliography logical. run pandoc with or without pandoc-citeproc, i.e. with or without resolving citatations to a bibliography
+#'  @param .bibFile character. basename of Bibtex .bib file. Optional if equal to \code{x}. 
+#'  @param .bibStyle literature formatting style
 #'  @export 
 #'  
-knit2docx <- function(x, out = NULL, withBib = TRUE, bib = NULL,  style = "harvard1_mod.csl"){
+knit2docx <- function(.fileBasename, .docxFile = NULL, .withBibliography = TRUE, .bibFile = NULL,  .bibStyle = "harvard1_mod.csl"){
+	 
+	.rmdFile <- paste0(.fileBasename, ".Rmd")
+	.mdFile  <- paste0(.fileBasename, ".md")
+	if(is.null(.docxFile)) .docxFile <- paste0(.fileBasename, ".docx")
+	if(.withBibliography & is.null(.bibFile)) .bibFile <- paste0(.fileBasename, ".bib")
 	
-	Rmd     <- paste0(x, ".Rmd")
-	md      <- paste0(x, ".md")
-	if(is.null(out)) out <- paste0(x, ".docx")
-	if(withBib & is.null(bib)) bib <- paste0(x, ".bib")
-	
-	if(!file.exists(Rmd)) stop(paste0(Rmd, " does not exist!"), call. = FALSE)
-	if(withBib){
-		if(!file.exists(bib)) stop(paste0(bib, " does not exist!"), call. = FALSE)
-		if(!file.exists(style)) stop(paste0(style, " does not exist!"), call. = FALSE)
+	if(!file.exists(.rmdFile)) stop(paste0(.rmdFile, " does not exist!"), call. = FALSE)
+	if(.withBibliography){
+		if(!file.exists(.bibFile))  stop(paste0(.bibFile, " does not exist!"), call. = FALSE)
+		if(!file.exists(.bibStyle)) stop(paste0(.bibStyle, " does not exist!"), call. = FALSE)
 	}
 	
 	## Create figure captions function in local environment
 	caption <- local({
-				figureNr <- 0
-				function(x, label=NA){
-					figureNr <<- figureNr + 1
-					out <- paste0("Fig ", currentChapter,".",figureNr, " ", x)
+				.figureNr <- 0
+				function(.captionText, label=NA){
+					.figureNr <<- .figureNr + 1
+					out <- paste0("Fig ", currentChapter,".",.figureNr, " ", .captionText)
 					if(!is.na(label)) out <- paste0(out, "<reflab>", label, "<reflab>")
 					return(out)
 				}
 			})
-	
+	  
 	
 	## Knit to markdown
-	knit(input = Rmd, output = md)
+	knit(input = .rmdFile, output = .mdFile)
 	
 	## Get plot lines in md
-	mdF <- readLines(md)
-	
+	.md_internal <- readLines(.mdFile)
+	 
 	## Copy external files to 'figure' folder #######################
-	fix <- grep("^.*\\(external/", mdF)
+	fix <- grep("^.*\\(external/", .md_internal)
 	if(length(fix) > 0){
-		exFile <- inFile <- str_replace(basename(mdF[fix]),")","")
+		exFile <- inFile <- str_replace(basename(.md_internal[fix]),")","")
 		## Add some stuff to keep unique (in randomness we trust our lazy soul)
 		inFile<- paste0(sample(1000:9000, length(fix)), exFile)
 		## Copy
 		file.copy(paste0("external/", exFile), paste0("figure/", inFile))
 		## Fix md
-		mdF[fix]  <- str_replace(mdF[fix], paste0("external/", exFile), paste0("figure/", inFile))
+		.md_internal[fix]  <- str_replace(.md_internal[fix], paste0("external/", exFile), paste0("figure/", inFile))
 		cat("Files copied from external/ to figure/: ", exFile)
 	}
 	
 	## Rename and label figures ######################################
-	fix <- grep("^!\\[Fig", mdF)
+	fix <- grep("^!\\[Fig", .md_internal)
 	if(length(fix) > 0) {
-		if(any(str_count(mdF[fix], "\\[Fig") > 1)) stop ("Execution halted! Each plot must be generated in a separate chunk. No chunk should produce two plots.", call. = FALSE)
+		if(any(str_count(.md_internal[fix], "\\[Fig") > 1)) stop ("Execution halted! Each plot must be generated in a separate chunk. No chunk should produce two plots.", call. = FALSE)
 		
-		g   <- mdF[fix]
+		g   <- .md_internal[fix]
 		bn <- str_replace(basename(g), ")", "")
 		filedot <- lapply(lapply(str_locate_all(bn, pattern = "\\."), max),"-",1)
 		fbase <- substring(bn, 1, filedot)
 		numb  <- lapply(str_split(substr(g,7,11)," "),"[",1)
 		
 		## Fix reference in markdown
-		mdF[fix] <- str_replace(g, paste0("figure/",fbase), paste0("figure/Fig_", numb))
+		.md_internal[fix] <- str_replace(g, paste0("figure/",fbase), paste0("figure/Fig_", numb))
 		
 		## Rename files
 		for(fb in seq_along(fbase)){
@@ -83,45 +83,45 @@ knit2docx <- function(x, out = NULL, withBib = TRUE, bib = NULL,  style = "harva
 	}
 	
 	## Resolve cross-references #####################################
-	refs <- grep("<ref>",mdF)
+	refs <- grep("<ref>",.md_internal)
 	if(length(refs) > 0){
-		nref <-  sum(str_count( mdF, "<ref>"))
+		nref <-  sum(str_count( .md_internal, "<ref>"))
 		if(nref %% 2 != 0) stop("Execution halted! There's at least one '<ref>' tag which is not closed", call. = FALSE)
 		cat("\n\nfound", nref/2, "cross-references to figures")
 		
 		for(i in refs){
-			howMany <- str_count( mdF[i], "<ref>") 
+			howMany <- str_count( .md_internal[i], "<ref>") 
 			while(howMany > 0) {
-				fi <- str_locate_all(mdF[i], "<ref>")[[1]]
-				label <- substr(mdF[i], fi[1,"end"]+1, fi[2,"start"]-1)
+				fi <- str_locate_all(.md_internal[i], "<ref>")[[1]]
+				label <- substr(.md_internal[i], fi[1,"end"]+1, fi[2,"start"]-1)
 				
 				## Search label target
-				fig <-  grep(paste0("<reflab>", label,"<reflab>"), mdF)
+				fig <-  grep(paste0("<reflab>", label,"<reflab>"), .md_internal)
 				
 				## Security gate: does it exist and is it unique?
 				if(length(fig) == 0) stop(paste0("Execution halted! Reference label '", label, "' does not exist. Use caption(x,label='yourLabel') to fix this"), call. = FALSE)
 				if(length(fig) > 1)  stop(paste0("Execution halted! Reference label '", label, "' is not unique."), call. = FALSE)
 				
 				## Extract target numbering
-				numb  <-   lapply(str_split(substr(mdF[fig],7,11)," "),"[",1)
+				numb  <-   lapply(str_split(substr(.md_internal[fig],7,11)," "),"[",1)
 				
 				## Replace label by proper reference
-				mdF[i] <- str_replace(mdF[i], paste0("<ref>",label,"<ref>"), paste0("Fig. ", numb))
-				howMany <- str_count( mdF[i], "<ref>") 
+				.md_internal[i] <- str_replace(.md_internal[i], paste0("<ref>",label,"<ref>"), paste0("Fig. ", numb))
+				howMany <- str_count( .md_internal[i], "<ref>") 
 			}
 		}
 		
 		## Tidy captions
 		cat("\ncross-references resolved")
-		mdF <-  str_replace(mdF, "<reflab>.*<reflab>", "")
+		.md_internal <-  str_replace(.md_internal, "<reflab>.*<reflab>", "")
 	}
 	
 	## Number captions ##############################################
-	Hn <- grep("<H\\d>", mdF)
+	Hn <- grep("<H\\d>", .md_internal)
 	
 	if(length(Hn) > 0) {
-		Hnum <- as.numeric(gsub('.+<H([0-9]+)>.+?$',"\\1",mdF[Hn]))
-		RmdF <- readLines(Rmd, 20)
+		Hnum <- as.numeric(gsub('.+<H([0-9]+)>.+?$',"\\1",.md_internal[Hn]))
+		RmdF <- readLines(.rmdFile, 20)
 		chap <-  as.numeric(gsub("\\D","",RmdF[grep("currentChapter", RmdF)]))
 		
 		Hl <- c(chap,0,0,0,0)
@@ -136,23 +136,23 @@ knit2docx <- function(x, out = NULL, withBib = TRUE, bib = NULL,  style = "harva
 		}
 		
 		cat("\n\nadded section counters to ", length(Hn), "headings (Headings >H3 won't be labelled)")
-		mdF[Hn] <- str_replace(mdF[Hn], "<H\\d>", labs)
+		.md_internal[Hn] <- str_replace(.md_internal[Hn], "<H\\d>", labs)
 	}
 	
 	## Rewrite md
-	writeLines(mdF, md)
+	writeLines(.md_internal, .mdFile)
 	
 	## Run pandoc
-	if(withBib) {
-		pcall <- paste("pandoc -sS", md, "-o", out, "--no-highlight --bibliography", bib, "--csl", style)
+	if(.withBibliography) {
+		pcall <- paste("pandoc -sS", .mdFile, "-o", .docxFile, "--no-highlight --bibliography", .bibFile, "--csl", .bibStyle)
 	} else {
-		pcall <- paste("pandoc -sS", md, "-o", out, "--no-highlight")
+		pcall <- paste("pandoc -sS", .mdFile, "-o", .docxFile, "--no-highlight")
 	}
 	
 	cat("\n\nrunning pandoc with call: ", pcall)  
 	system(pcall, intern = FALSE, wait = FALSE)
 	cat("\n",rep("-",20),"\n")
-	message("\nwrote ", x, ".docx")
+	message("\nwrote ", .fileBasename, ".docx")
 	
 }
 

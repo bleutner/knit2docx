@@ -4,24 +4,24 @@
 \alias{knit2docx-package}
 \title{knit2docx}
 \usage{
-knit2docx(x, out = NULL, withBib = TRUE, bib = NULL,
-  style = "harvard1_mod.csl")
+knit2docx(.fileBasename, .docxFile = NULL, .withBibliography = TRUE,
+  .bibFile = NULL, .bibStyle = "harvard1_mod.csl")
 }
 \arguments{
-  \item{x}{character. basename of .Rmd file without
-  extension, e.g. "Chapter1"}
+  \item{.fileBasename}{character. basename of .Rmd file
+  without extension, e.g. "Chapter1"}
 
-  \item{out}{optional. character. basename of output docx
-  file. If not suplied \code{x} will be used.}
+  \item{.docxFile}{optional. character. basename of output
+  docx file. If not suplied \code{x} will be used.}
 
-  \item{withBib}{logical. run pandoc with or without
-  pandoc-citeproc, i.e. with or without resolving
+  \item{.withBibliography}{logical. run pandoc with or
+  without pandoc-citeproc, i.e. with or without resolving
   citatations to a bibliography}
 
-  \item{bib}{character. basename of Bibtex .bib file.
+  \item{.bibFile}{character. basename of Bibtex .bib file.
   Optional if equal to \code{x}.}
 
-  \item{style}{literature formatting style}
+  \item{.bibStyle}{literature formatting style}
 }
 \description{
 knit2docx
