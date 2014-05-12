@@ -45,9 +45,9 @@ knit2docx <- function(.fileBasename, .docxFile = NULL, .withBibliography = TRUE,
 	## Copy external files to 'figure' folder #######################
 	fix <- grep("^.*\\(external/", .md_internal)
 	if(length(fix) > 0){
-		exFile <- inFile <- str_replace(basename(.md_internal[fix]),")","")
+		exFile <- inFile <- str_trim(str_replace(basename(.md_internal[fix]),")",""))
 		## Add some stuff to keep unique (in randomness we trust our lazy soul)
-		inFile<- paste0(sample(1000:9000, length(fix)), exFile)
+		inFile <- paste0(sample(1000:9000, length(fix)), exFile)
 		## Copy
 		file.copy(paste0("external/", exFile), paste0("figure/", inFile))
 		## Fix md
