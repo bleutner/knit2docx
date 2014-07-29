@@ -47,7 +47,7 @@ knit2docx <- function(.fileBasename, .docxFile = NULL, .withBibliography = TRUE,
 	if(length(fix) > 0){
 		exFile <- inFile <- str_trim(str_replace(basename(.md_internal[fix]),")",""))
     ## Check if files actually exist
-    if(any(!file.exists(paste0("external/",exFile)))) stop(paste0("File ", exFile[!file.exists(paste0("external/",exFile))], "does not exist!"), call. = FALSE)       
+    if(any(!file.exists(paste0("external/",exFile)))) stop(paste0("File external/", exFile[!file.exists(paste0("external/",exFile))], " does not exist!"), call. = FALSE)       
 		## Add some stuff to keep unique (in randomness we trust our lazy soul)
 		inFile <- paste0(sample(10000:99999, length(fix)), exFile)
 		## Copy
