@@ -46,10 +46,12 @@ knit2docx <- function(.fileBasename, .docxFile = NULL, .withBibliography = TRUE,
 	fix <- grep("^.*\\(external/", .md_internal)
 	if(length(fix) > 0){
 		exFile <- inFile <- str_trim(str_replace(basename(.md_internal[fix]),")",""))
+    ## Check if files actually exist
+    if(any(!file.exists(paste0("external/",exFile)))) stop(paste0("File ", exFile[!file.exists(paste0("external/",exFile))], "does not exist!"), call. = FALSE)       
 		## Add some stuff to keep unique (in randomness we trust our lazy soul)
-		inFile <- paste0(sample(1000:9000, length(fix)), exFile)
+		inFile <- paste0(sample(10000:99999, length(fix)), exFile)
 		## Copy
-		file.copy(paste0("external/", exFile), paste0("figure/", inFile))
+		file.copy(paste0("external/", exFile), paste0("figure/", inFile), overwrite=TRUE)
 		## Fix md
 		.md_internal[fix]  <- str_replace(.md_internal[fix], paste0("external/", exFile), paste0("figure/", inFile))
 		cat("Files copied from external/ to figure/: ", exFile)
@@ -86,7 +88,7 @@ knit2docx <- function(.fileBasename, .docxFile = NULL, .withBibliography = TRUE,
 	refs <- grep("<ref>",.md_internal)
 	if(length(refs) > 0){
 		nref <-  sum(str_count( .md_internal, "<ref>"))
-		if(nref %% 2 != 0) stop("Execution halted! There's at least one '<ref>' tag which is not closed", call. = FALSE)
+		if(nref %% 2) stop("Execution halted! There's at least one '<ref>' tag which is not closed", call. = FALSE)
 		cat("\n\nfound", nref/2, "cross-references to figures")
 		
 		for(i in refs){
