@@ -108,7 +108,8 @@ knit2docx <- function(.fileBasename, .docxFile = NULL, .withBibliography = TRUE,
 				numb  <-   lapply(str_split(substr(.md_internal[fig],7,11)," "),"[",1)
 				
 				## Replace label by proper reference
-				.md_internal[i] <- str_replace(.md_internal[i], paste0("<ref>",label,"<ref>"), paste0("Fig. ", numb))
+				Fig_string <- "" # "Fig. "
+				.md_internal[i] <- str_replace(.md_internal[i], paste0("<ref>",label,"<ref>"), paste0(Fig_string, numb))
 				howMany <- str_count( .md_internal[i], "<ref>") 
 			}
 		}
