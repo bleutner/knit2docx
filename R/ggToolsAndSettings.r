@@ -8,6 +8,8 @@ ggR <- function(x, layer = 1, maxpixels = 5000000) {
     df <- data.frame(coordinates(drast), drast[])
     colnames(df) <- c("x", "y", names(x[[layer]]))
     layer <- colnames(df)[3]
+  #  df <- melt(df, id.vars = c("x","y"))
+    
     ggplot(df) + geom_raster(aes_string(x = "x", y = "y", fill = layer)) +
             scale_fill_gradient(low = "black", high = "white") +
             coord_equal() +
