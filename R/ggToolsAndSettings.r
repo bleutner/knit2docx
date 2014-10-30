@@ -11,7 +11,7 @@ ggR <- function(x, layer = 1, maxpixels = 5000000) {
   #  df <- melt(df, id.vars = c("x","y"))
     
     ggplot(df) + geom_raster(aes_string(x = "x", y = "y", fill = layer)) +
-            scale_fill_gradient(low = "black", high = "white") +
+            scale_fill_gradient(low = "black", high = "white", na.value = NA) +
             coord_equal() +
             MAPTHEME
 }
