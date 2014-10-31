@@ -1,0 +1,17 @@
+```{r echo = FALSE, cache = FALSE, message = FALSE}
+library(ggplot2)
+
+# define palette of colors
+pal = list (
+  qualitative = brewer.pal(9, "Greens")
+)
+names(pal$qualitative) = 1:length(pal$qualitative)
+
+# make randomness repeatable
+set.seed(101)
+
+# define theme of graphics
+theme_set(theme_bw())
+
+```
+

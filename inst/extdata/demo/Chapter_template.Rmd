@@ -1,0 +1,139 @@
+Chapter 0 -- Title of chapter
+========================================================
+##### First author, second author, ...
+```{r, include=FALSE}
+currentChapter <- 1
+```
+```{r, child="knitr_settings.Rmd", include =FALSE}
+```
+
+```{r, child="preamble.Rmd", include =FALSE}
+```
+
+
+Use knit2docx("Chapter1") within your chapter directory to create docx output (or simply stick to knit2html,
+note however that references, figure labels etc won't show up in html.
+
+What knit2docx will do
+
+* create figure captions and numbering
+* resolve cross-references to figures
+* rename figure files according to their position (e.g. Fig_2.1.tiff)
+* rename external figure files according to their position and copy them to figure/
+* create bibliography
+
+## Rmarkdown syntax
+
+## Level two heading
+
+### Level three heading
+
+#### Level four heading
+
+This is an ordered list
+
+1. Item one
+2. Item two
+
+This is a categorical list
+
+* Item X
+* Item y
+
+This is *it italics* and this is **bold**.
+
+## Writing code 
+### R code
+
+Have a look at knitr_settings.Rmd for default settings. Note that knitr option 'tidy' is activated by default. Indentations, spaces aroud equal signs etc will be added automatically. Please **do use full argument names** in function calls, not just matching by position.
+
+```{r}
+## Create some random data
+n <- data.frame(x=1:10, y = rnorm(10))
+
+## Do some calculations
+for (i in 10:1){
+if(i == 10){print("Liftoff")}
+}
+```
+
+### Unevaluated code
+
+Code which is not to be evaluted (e.g. GRASS code) but to be formatted as such should be indented by at least two tab spaces. It ends when the first non-indented paragraph apears.
+
+    g.region -p
+    r.in.gdal --q -o in=myRaster.tiff out=NDVI --o
+
+
+## Figures
+### Figures created in R
+If your R code will generate graphical output, use fig.cap=caption("Your Caption without 'Fig 1.1' prefix"). If you want to refer to a specific figure by cross-referencing, you must supply the second argument `label=` to `caption()`. Note that knitr option 'fig.show' is set to 'hold'. I.e. figures will appear after the current code chunk no matter where they are created. Use 'fig.show="as.is"' to modify this behaviour. We write two files: 1) a lowres png file for quick display in docx and html if you run knit HTML, 2) a highres tiff file for inclusion in the book. Please note any optimizations with regard to graphics (sufficient size of axis labels etc.) should be done using the tiff files (i.e. **not what you see in the docx or html file**). The png files will be discarded at the end! 
+Please use **one chunk per figure**, otherwise it won't be referenced properly.
+
+```{r, fig.cap=caption("This is pure randomness", label ="yourLabel")}
+library(ggplot2)
+ggplot(n) + geom_line(aes(x = x, y = y))
+```
+
+```{r, message=FALSE, echo=FALSE}
+library(raster)
+x <- raster(matrix(sample(runif(25,min=1,max=10),25,replace=TRUE),5,5))
+```
+
+```{r firstrasterplot, echo=FALSE}
+y1 <- data.frame(coordinates(x), values = round(x[],2))
+ggplot(y1) + geom_raster(aes(x = x, y = y, fill = values)) + 
+  geom_text(aes(x = x, y = y, label = values))+
+  scale_fill_continuous(low="grey", high="white") +
+  guides(fill = guide_colourbar())+
+  theme_overall
+```
+
+
+### External (non-R) graphics:
+Please put all external graphics in the subfolder 'external' in your Chapter directory. Use the `caption()` in an in-line R-chunk for the description.
+
+![`r caption("QGIS dispaying a raster", label="labelToRemember")`](external/qgis.jpg)
+
+## Referencing figures
+Use the <ref>yourLabel<ref> identifier to refer to a figure by the label you have given it in `caption()`. 
+Example: as you can see in  <ref>labelToRemember<ref> and <ref>yourLabel<ref> ... Note, however, this is **not standard markdown syntax**. It'll work only with the functions supplied with this template (the same goes for the caption() function of course).
+
+## Tables
+All tables should be saved in a single Word document (see separate **Tables_template.docx**) with one table constructed on each page.  
+Unlike figures tables should be numbered manually by chapter and number within the chapter, e.g. ‘Table 2.4’.  
+ 
+Place table numbers and captions in the manuscript *as well* to indicate where they should appear. When referring to tables in the main text , name them  by number, e.g. ‘Table 1.1 includes’, but avoid referring to them by their position, i.e. ‘the following table’.  
+ 
+Place sources and notes immediately below each table. If a table is taken in whole  from another publication, especially  government reports, you must apply for permission to reproduce it from the copyright holder. 
+  
+Prepare tables with the minimum of horizontal rules; usually three are sufficient (one at top, one below column headings, one at foot). Try not to  use vertical rules.  
+ 
+Check that totals add up correctly and that numerals align. 
+
+Example of inclusion in this document:
+
+Table 1.1 This is the table caption in the main manuscript. It is roughly placed, where it is supposed to appear ...
+
+
+## References
+### Citations
+Please preapare a .bib Bitbtex library file. References will be refered to and resolved based on the bibtex key. At the very end of the document the list of cited references will be inserted. Hence the empty references section at the end.
+
+Reference with author in brackets [@Culmsee2014]. 
+
+Now we wanna cite two authors [@Culmsee2014; @Dormann2007a]
+
+Inline reference. As shown by @Culmsee2014 this is the case.
+
+Reference with prefixes etc in brackets [see @Culmsee2014 for a detailed discussion]
+
+
+### Footnotes 
+To add footnotes do this ^[Footnote text] where you want to insert it. Note that this will not render correctly in html but in docx.
+
+### Links
+Links can be set as [http://www.saga-gis.org](http://www.saga-gis.org)
+
+## References
+

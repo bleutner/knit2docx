@@ -1,0 +1,31 @@
+```{r setup, tidy=FALSE}
+
+## Include preamble settings
+library(knitr)
+library(knit2docx)
+
+opts_chunk$set(eval=TRUE, 
+               dpi=c(72,300,300), 
+               fig.height=c(5,5,5), 
+               fig.width= c(6,6,6), 
+               dev=c('png', 'tiff', 'pdf'), 
+               fig.show='hold',           ## Show figures at the end of each chunk, not in between
+               tidy = TRUE,               ## This will do some cleanup of code, e.g. add spaces around "=", fix indentation etc.
+               results = 'asis'               
+               )
+
+
+## Keep this here if you want to run knit2html etc. 
+## It doesn't have any effect on knit2docx, which comes with it's own copy of caption()
+ caption <- local({
+        figureNr <- 0
+        function(x, label = NA) {
+            figureNr <<- figureNr + 1
+            out <- paste0("Fig ", currentChapter, ".", figureNr, 
+                " ", x)
+            if (!is.na(label)) 
+                out <- paste0(out, "<reflab>", label, "<reflab>")
+            return(out)
+        }})
+
+```
