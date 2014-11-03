@@ -5,7 +5,7 @@
 #' @param lowColor Character. Color for lowest value
 #' @param highColor Character. Color for highest value
 #'  @export 
-ggR <- function(x, layer = 1, maxpixels = 5000000, lowColor = "white", highColor = "black") {  
+ggR <- function(x, layer = 1, maxpixels = 5000000, lowColor = "white", highColor = "black", legendName = "Legend") {  
     drast <- sampleRegular(x[[layer]], maxpixels, asRaster = TRUE)
     df <- data.frame(coordinates(drast), drast[])
     colnames(df) <- c("x", "y", names(x[[layer]]))
@@ -13,7 +13,7 @@ ggR <- function(x, layer = 1, maxpixels = 5000000, lowColor = "white", highColor
   #  df <- melt(df, id.vars = c("x","y"))
     
     ggplot(df) + geom_raster(aes_string(x = "x", y = "y", fill = layer)) +
-            scale_fill_gradient(low = lowColor, high = highColor, na.value = NA) +
+            scale_fill_gradient(low = lowColor, high = highColor, na.value = NA, name = legendName) +
             coord_equal() +
             MAPTHEME
 }
