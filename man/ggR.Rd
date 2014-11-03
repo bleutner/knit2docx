@@ -4,7 +4,8 @@
 \alias{ggR}
 \title{Plot rasters in ggplot with greyscale}
 \usage{
-ggR(x, layer = 1, maxpixels = 5e+06)
+ggR(x, layer = 1, maxpixels = 5e+06, lowColor = "white",
+  highColor = "black")
 }
 \arguments{
 \item{x}{raster}
@@ -12,6 +13,10 @@ ggR(x, layer = 1, maxpixels = 5e+06)
 \item{layer}{layername}
 
 \item{maxpixels}{Integer. Maximal number of pixels to sample}
+
+\item{lowColor}{Character. Color for lowest value}
+
+\item{highColor}{Character. Color for highest value}
 }
 \description{
 Plot rasters in ggplot with greyscale

@@ -15,7 +15,7 @@
 #' ## Copy demo files to knit2docx_demo folder
 #' dir.create("knit2docx_demo")
 #' file.copy(list.files(system.file("extdata/demo/", package = "knit2docx")), "knit2docx_demo", recursive = TRUE)
-#' list.files("knit2docx_demo")
+#' rlist.files("knit2docx_demo")
 #' ## Convert Rmd to docx
 #' knit2docx("knit2docx_demo/Chapter_template")
 #' ## Open with Word:
