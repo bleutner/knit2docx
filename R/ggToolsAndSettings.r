@@ -4,6 +4,8 @@
 #' @param maxpixels Integer. Maximal number of pixels to sample
 #' @param lowColor Character. Color for lowest value
 #' @param highColor Character. Color for highest value
+#' @param legendName Character. Layer name
+#' 
 #'  @export 
 ggR <- function(x, layer = 1, maxpixels = 5000000, lowColor = "white", highColor = "black", legendName = "Legend") {  
     drast <- sampleRegular(x[[layer]], maxpixels, asRaster = TRUE)
