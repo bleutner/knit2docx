@@ -5,7 +5,7 @@
 \title{Plot rasters in ggplot with greyscale}
 \usage{
 ggR(x, layer = 1, maxpixels = 5e+06, lowColor = "white",
-  highColor = "black", legendName = "Legend")
+  highColor = "black", legendName = "Legend", ggObj = TRUE)
 }
 \arguments{
 \item{x}{raster}
@@ -19,6 +19,8 @@ ggR(x, layer = 1, maxpixels = 5e+06, lowColor = "white",
 \item{highColor}{Character. Color for highest value}
 
 \item{legendName}{Character. Layer name}
+
+\item{ggObj}{Logical. Return a ggplot2 object (TRUE) or just the data.frame}
 }
 \description{
 Plot rasters in ggplot with greyscale
