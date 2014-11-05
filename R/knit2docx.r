@@ -49,12 +49,7 @@ knit2docx <- function(.fileBasename, .docxFile = NULL, .withBibliography = TRUE,
             })
     
     
-    ## Knit to markdown
-    .rmdFile_dummy <- readLines(.rmdFile)
-    grepl("\\<H[123]\\>", .rmdFile_dummy)
-    
-    
-    
+    ## Knit to markdown 
     knit(input = .rmdFile, output = .mdFile)
     
     
@@ -149,9 +144,11 @@ knit2docx <- function(.fileBasename, .docxFile = NULL, .withBibliography = TRUE,
         .md_internal[fixmeImOld] <- str_replace(.md_internal[fixmeImOld], "<H[12345]>", "")
     }
     
-    chunkopen <- grep("^```r", .md_internal)
-    chunkclose <-  grep("^```$", .md_internal)
-    if(length(chunkopen) != length(chunkclose)) stop("At least one chunk of R code is not properly opened or closed!")
+    chunkdelim <- grep("^```", .md_internal)
+    if(length(chunkdelim) %% 2)  stop("At least one chunk of R code is not properly opened or closed!")
+    chunkopen <- chunkdelim[seq(1,length(chunkdelim), 2)]
+    chunkclose <- chunkdelim[seq(2,length(chunkdelim), 2)]
+    
     chunkmembers <- unlist(sapply(seq_along(chunkopen), function(i) chunkopen[i]:chunkclose[i]))
     
     Hn <- Hn[!Hn %in% chunkmembers]
@@ -161,6 +158,7 @@ knit2docx <- function(.fileBasename, .docxFile = NULL, .withBibliography = TRUE,
         chap <-  as.numeric(gsub("\\D","",RmdF[grep("currentChapter", RmdF)]))
         
         Hl <- c(chap,0,0,0,0)
+        
         labs <- character(length(Hn))
         for(i in seq_along(Hn)){
             s <- Hnum[i]
