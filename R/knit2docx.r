@@ -48,14 +48,15 @@ knit2docx <- function(.fileBasename, .docxFile = NULL, .withBibliography = TRUE,
                 }
             })
     
-    
+    ## Clean up previous figures 
+    print("Removing old files in /figure")
+    unlink(list.files("figure", full = TRUE))
+        
     ## Knit to markdown 
     knit(input = .rmdFile, output = .mdFile)
     
-    
     ## Get plot lines in md
     .md_internal <- readLines(.mdFile)
-    
     
     ## Copy external files to 'figure' folder #######################
     fix <- grep("^.*\\(external/", .md_internal)
@@ -86,6 +87,15 @@ knit2docx <- function(.fileBasename, .docxFile = NULL, .withBibliography = TRUE,
         ## Fix reference in markdown
         .md_internal[fix] <- str_replace(g, paste0("figure/",fbase), paste0("figure/Fig_", numb))
         
+        ## Add blank lines if neccesary (needed for proper pandoc conversion
+        noBlank <- fix[.md_internal[fix-1] != ""]-1
+        shift   <- 0
+        for(nb in noBlank) {
+            nb <- nb + shift
+            .md_internal <- c(.md_internal[1:nb], "", .md_internal[nb + 1:length(.md_internal)])
+            shift <- shift +1
+        }
+        
         ## Rename files
         for(fb in seq_along(fbase)){
             fil <- list.files(path = "figure", pattern = paste0(fbase[[fb]],"\\."))
@@ -102,7 +112,7 @@ knit2docx <- function(.fileBasename, .docxFile = NULL, .withBibliography = TRUE,
     ## Resolve cross-references #####################################
     refs <- grep("<ref>",.md_internal)
     if(length(refs) > 0){
-        nref <-  sum(str_count( .md_internal, "<ref>"))
+        nref <-  sum(str_count(.md_internal[refs], "<ref>"))
         if(nref %% 2) stop("Execution halted! There's at least one '<ref>' tag which is not closed", call. = FALSE)
         cat("\n\nfound", nref/2, "cross-references to figures")
         
@@ -123,7 +133,7 @@ knit2docx <- function(.fileBasename, .docxFile = NULL, .withBibliography = TRUE,
                 numb  <-   lapply(str_split(substr(.md_internal[fig],7,11)," "),"[",1)
                 
                 ## Replace label by proper reference
-                Fig_string <- "" # "Fig. "
+                Fig_string <- "Fig. " ## "" ## Fig. "
                 .md_internal[i] <- str_replace(.md_internal[i], paste0("<ref>",label,"<ref>"), paste0(Fig_string, numb))
                 howMany <- str_count( .md_internal[i], "<ref>") 
             }
