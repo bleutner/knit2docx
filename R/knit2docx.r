@@ -82,7 +82,7 @@ knit2docx <- function(.fileBasename, .docxFile = NULL, .withBibliography = TRUE,
         bn <- str_replace(basename(g), ")", "")
         filedot <- lapply(lapply(str_locate_all(bn, pattern = "\\."), max),"-",1)
         fbase <- substring(bn, 1, filedot)
-        numb  <- lapply(str_split(substr(g,7,11)," "),"[",1)
+        numb  <- sapply(str_split(substr(g,7,11)," "),"[",1)
         
         ## Fix reference in markdown
         .md_internal[fix] <- str_replace(g, paste0("figure/",fbase), paste0("figure/Fig_", numb))
@@ -92,7 +92,7 @@ knit2docx <- function(.fileBasename, .docxFile = NULL, .withBibliography = TRUE,
         shift   <- 0
         for(nb in noBlank) {
             nb <- nb + shift
-            .md_internal <- c(.md_internal[1:nb], "", .md_internal[nb + 1:length(.md_internal)])
+            .md_internal <- c(.md_internal[1:nb], "", .md_internal[(nb + 1):length(.md_internal)])
             shift <- shift +1
         }
         
