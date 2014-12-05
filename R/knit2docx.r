@@ -124,7 +124,7 @@ knit2docx <- function(.fileBasename, .docxFile = NULL, .withBibliography = TRUE,
                 
                 ## Search label target
                 fig <-  grep(paste0("<reflab>", label,"<reflab>"), .md_internal)
-                
+                 
                 ## Security gate: does it exist and is it unique?
                 if(length(fig) == 0) stop(paste0("Execution halted! Reference label '", label, "' does not exist. Use caption(x,label='yourLabel') to fix this"), call. = FALSE)
                 if(length(fig) > 1)  stop(paste0("Execution halted! Reference label '", label, "' is not unique."), call. = FALSE)
