@@ -187,7 +187,7 @@ knit2docx <- function(.fileBasename, .docxFile = NULL, .withBibliography = TRUE,
     writeLines(.md_internal, .mdFile)
     
     ## Run pandoc	
-    pcall <- paste("pandoc -sS", .mdFile, "-o", .docxFile, "--highlight-style=monochrome" )
+    pcall <- paste("pandoc -sS", .mdFile, "-o", .docxFile, "--highlight-style=tango" )
     if(.withBibliography) pcall <- paste(pcall, "--bibliography", .bibFile, "--csl", .bibStyle)
     
     cat("\n\nrunning pandoc with call: ", pcall)  
