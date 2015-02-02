@@ -70,7 +70,7 @@ knit2docx <- function(.fileBasename, .docxFile = NULL, .withBibliography = TRUE,
     ## Ingnore knitr settings file (keep for people who use knit2html
     .rmdLoaded <- readLines(.rmdFile)
     line <- grep("knitr_settings.Rmd", .rmdLoaded)
-    if(length(line)>0){ message("knitr_settings.Rmd is ignored in knit2docx but required if you run knitr::knit2html. So settings in here don't affect the docx file.")
+    if(length(line)>0){ message("knitr_settings.Rmd is ignored in knit2docx but required if you run knitr::knit2html.\nSettings in here don't affect the docx file.")
         .rmdLoaded[line] <- gsub("\\}", ",eval=FALSE\\}", .rmdLoaded[line])
     }
     
