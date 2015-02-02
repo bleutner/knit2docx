@@ -9,6 +9,7 @@
 #'  @param .withBibliography logical. run pandoc with or without pandoc-citeproc, i.e. with or without resolving citatations to a bibliography
 #'  @param .bibFile character. basename of Bibtex .bib file. Optional if equal to \code{x}. 
 #'  @param .bibStyle literature formatting style
+#'	@param stopOnErrors logical. Stop if there were errors in R code. (Happens after knitr)
 #'  @export 
 #' @examples 
 #' \dontrun{
@@ -48,16 +49,28 @@ knit2docx <- function(.fileBasename, .docxFile = NULL, .withBibliography = TRUE,
                 }
             })
     
+    ## Knitr settings
+    opts_chunk$set(eval=TRUE, 
+            dpi=c(72,300,300), 
+            fig.height=c(3,5,5), 
+            fig.width= c(3,5,5), 
+            dev=c('png','tiff', 'pdf'), 
+            fig.show='hold',           ## Show figures at the end of each chunk, not in between
+            tidy = TRUE,               ## This will do some cleanup of code, e.g. add spaces around "=", fix indentation etc.
+            results = 'asis' , 
+            error=FALSE)
+    
     ## Clean up previous figures 
     print("Removing old files in /figure")
     unlink(list.files("figure", full = TRUE))
-        
+      
     ## Knit to markdown 
     knit(input = .rmdFile, output = .mdFile)
     
     ## Get plot lines in md
-    .md_internal <- readLines(.mdFile)
+    .md_internal <- readLines(.mdFile) 
     
+   
     ## Copy external files to 'figure' folder #######################
     fix <- grep("^.*\\(external/", .md_internal)
     if(length(fix) > 0){

@@ -18,6 +18,8 @@ knit2docx(.fileBasename, .docxFile = NULL, .withBibliography = TRUE,
 \item{.bibFile}{character. basename of Bibtex .bib file. Optional if equal to \code{x}.}
 
 \item{.bibStyle}{literature formatting style}
+
+\item{stopOnErrors}{logical. Stop if there were errors in R code. (Happens after knitr)}
 }
 \description{
 knit2docx
