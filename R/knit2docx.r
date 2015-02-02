@@ -26,7 +26,7 @@
 #' }
 #'  
 knit2docx <- function(.fileBasename, .docxFile = NULL, .withBibliography = TRUE, .bibFile = NULL,  .bibStyle = "harvard1_mod.csl"){
-
+    
     .rmdFile <- paste0(.fileBasename, ".Rmd")
     .mdFile  <- paste0(.fileBasename, ".md")
     if(is.null(.docxFile)) .docxFile <- paste0(.fileBasename, ".docx")
@@ -53,24 +53,34 @@ knit2docx <- function(.fileBasename, .docxFile = NULL, .withBibliography = TRUE,
     opts_chunk$set(eval=TRUE, 
             dpi=c(72,300,300), 
             fig.height=c(3,5,5), 
-            fig.width= c(3,5,5), 
-            dev=c('png','tiff', 'pdf'), 
+            fig.width= c(4,5,5), 
+            dev=c('png','tiff','pdf'), 
             fig.show='hold',           ## Show figures at the end of each chunk, not in between
             tidy = TRUE,               ## This will do some cleanup of code, e.g. add spaces around "=", fix indentation etc.
-            results = 'asis' , 
-            error=FALSE)
+            error=FALSE,
+            prompt=FALSE,
+            results="markup",
+            comment="#>"
+    )
     
     ## Clean up previous figures 
     print("Removing old files in /figure")
     unlink(list.files("figure", full = TRUE))
-      
+    
+    ## Ingnore knitr settings file (keep for people who use knit2html
+    .rmdLoaded <- readLines(.rmdFile)
+    line <- grep("knitr_settings.Rmd", .rmdLoaded)
+    if(length(line)>0){ message("knitr_settings.Rmd is ignored in knit2docx but required if you run knitr::knit2html. So settings in here don't affect the docx file.")
+        .rmdLoaded[line] <- gsub("\\}", ",eval=FALSE\\}", .rmdLoaded[line])
+    }
+    
     ## Knit to markdown 
-    knit(input = .rmdFile, output = .mdFile)
+    knit(text = .rmdLoaded, output = .mdFile)
     
     ## Get plot lines in md
     .md_internal <- readLines(.mdFile) 
     
-   
+    
     ## Copy external files to 'figure' folder #######################
     fix <- grep("^.*\\(external/", .md_internal)
     if(length(fix) > 0){
@@ -137,7 +147,7 @@ knit2docx <- function(.fileBasename, .docxFile = NULL, .withBibliography = TRUE,
                 
                 ## Search label target
                 fig <-  grep(paste0("<reflab>", label,"<reflab>"), .md_internal)
-                 
+                
                 ## Security gate: does it exist and is it unique?
                 if(length(fig) == 0) stop(paste0("Execution halted! Reference label '", label, "' does not exist. Use caption(x,label='yourLabel') to fix this"), call. = FALSE)
                 if(length(fig) > 1)  stop(paste0("Execution halted! Reference label '", label, "' is not unique."), call. = FALSE)
