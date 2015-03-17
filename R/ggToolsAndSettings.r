@@ -10,6 +10,7 @@
 #'  @export 
 ggR <- function(x, layer = 1, maxpixels = 5000000, lowColor = "white", highColor = "black", legendName = "Legend", ggObj = TRUE) {  
     drast <- sampleRegular(x[[layer]], maxpixels, asRaster = TRUE)
+    warning("knit2docx:ggR is deprecated. Use RStoolbox::ggR instead")
     df <- data.frame(coordinates(drast), drast[])
     colnames(df) <- c("x", "y", names(x[[layer]]))
     layer <- colnames(df)[3]
