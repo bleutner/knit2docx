@@ -7,10 +7,11 @@
 #' @param legendName Character. Layer name
 #' @param ggObj Logical. Return a ggplot2 object (TRUE) or just the data.frame
 #' 
-#'  @export 
-ggR <- function(x, layer = 1, maxpixels = 5000000, lowColor = "white", highColor = "black", legendName = "Legend", ggObj = TRUE) {  
+#'   
+DEP_ggR <- function(x, layer = 1, maxpixels = 5000000, lowColor = "white", highColor = "black", legendName = "Legend", ggObj = TRUE) {    
+    stop("knit2docx:ggR is deprecated. Use RStoolbox::ggR instead")
+
     drast <- sampleRegular(x[[layer]], maxpixels, asRaster = TRUE)
-    warning("knit2docx:ggR is deprecated. Use RStoolbox::ggR instead")
     df <- data.frame(coordinates(drast), drast[])
     colnames(df) <- c("x", "y", names(x[[layer]]))
     layer <- colnames(df)[3]
