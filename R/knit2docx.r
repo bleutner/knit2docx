@@ -179,12 +179,13 @@ knit2docx <- function(.fileBasename, .docxFile = NULL, .withBibliography = TRUE,
     
     chunkdelim <- grep("^```", .md_internal)
     if(length(chunkdelim) %% 2)  stop("At least one chunk of R code is not properly opened or closed!")
-    chunkopen <- chunkdelim[seq(1,length(chunkdelim), 2)]
-    chunkclose <- chunkdelim[seq(2,length(chunkdelim), 2)]
+    if(length(chunkdelim)!=0){
+        chunkopen <- chunkdelim[seq(1,length(chunkdelim), 2)]
+        chunkclose <- chunkdelim[seq(2,length(chunkdelim), 2)]
+        chunkmembers <- unlist(sapply(seq_along(chunkopen), function(i) chunkopen[i]:chunkclose[i]))
+        Hn <- Hn[!Hn %in% chunkmembers]
+    } 
     
-    chunkmembers <- unlist(sapply(seq_along(chunkopen), function(i) chunkopen[i]:chunkclose[i]))
-    
-    Hn <- Hn[!Hn %in% chunkmembers]
     if(length(Hn) > 0) {
         Hnum <- sapply(sapply(str_split(.md_internal[Hn], ""), "==", "#"), "sum")
         RmdF <- readLines(.rmdFile, 20)
