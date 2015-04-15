@@ -12,9 +12,9 @@ SCALE(ras = NULL, len = 10000, yoff = 0.6, xoff = 0.2, sdist = 800,
 
 \item{len}{Numeric. Length of scalebar (map units)}
 
-\item{yoff}{y offset from lower left corner (in %)}
+\item{yoff}{y offset from lower left corner (in percent)}
 
-\item{xoff}{x offset from lower left corner (in %)}
+\item{xoff}{x offset from lower left corner (in percent)}
 
 \item{sdist}{Numeric. Length of ticks}
 

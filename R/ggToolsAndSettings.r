@@ -9,21 +9,21 @@
 #' 
 #' @export 
 ggRx <- function(x, layer = 1, maxpixels = 5000000, lowColor = "white", highColor = "black", legendName = "Legend", ggObj = TRUE) {    
-
+    
     drast <- sampleRegular(x[[layer]], maxpixels, asRaster = TRUE)
     df <- data.frame(coordinates(drast), drast[])
     colnames(df) <- c("x", "y", names(x[[layer]]))
     layer <- colnames(df)[3]
-  #  df <- melt(df, id.vars = c("x","y"))
+    #  df <- melt(df, id.vars = c("x","y"))
     
     if(ggObj) {p <- ggplot(df) + geom_raster(aes_string(x = "x", y = "y", fill = layer)) +
-            scale_fill_gradient(low = lowColor, high = highColor, na.value = NA, name = legendName) +
-            coord_equal() +
-            MAPTHEME
-} else {
-    p <- df
-}
-return(p)
+                scale_fill_gradient(low = lowColor, high = highColor, na.value = NA, name = legendName) +
+                coord_equal() +
+                MAPTHEME
+    } else {
+        p <- df
+    }
+    return(p)
 }
 
 
@@ -32,8 +32,8 @@ return(p)
 #'
 #' @param ras Raster*
 #' @param len Numeric. Length of scalebar (map units)
-#' @param yoff y offset from lower left corner (in %)
-#' @param xoff x offset from lower left corner (in %)
+#' @param yoff y offset from lower left corner (in percent)
+#' @param xoff x offset from lower left corner (in percent)
 #' @param sdist Numeric. Length of ticks
 #' @param tdist Numeric. Distance text from ticks.
 #' @param size Numeric. Thickness of scalebar
@@ -66,16 +66,19 @@ SCALE <- function(ras = NULL, len = 10000, yoff = 0.6, xoff = 0.2, sdist = 800, 
 
 #' Theme for map plotting
 #' @export 
-MAPTHEME <- theme(
-        axis.title.y = element_blank(),
-        axis.title.x = element_blank(),
-        axis.text.x  = element_text(size=8, colour="grey50"),
-        axis.text.y  = element_text(angle=90, size=8, colour="grey50"),
-        axis.ticks    = element_line(colour = "grey50"),
-        axis.ticks.length = unit(0.06, "cm"),
-        strip.text.x = element_text(size = 8),
-        strip.text.y = element_text(size = 8, angle=270),
-        plot.title   = element_text(size = 9, hjust  =  0),
-        legend.title = element_text(size = 9),
-        legend.text  = element_text(size = 8)				
-)
+MAPTHEME <- list(
+        theme(
+                axis.title.y = element_blank(),
+                axis.title.x = element_blank(),
+                axis.text.x  = element_text(size=8, colour="grey50"),
+                axis.text.y  = element_text(angle=90, size=8, colour="grey50"),
+                axis.ticks    = element_line(colour = "grey50"),
+                axis.ticks.length = unit(0.06, "cm"),
+                strip.text.x = element_text(size = 8),
+                strip.text.y = element_text(size = 8, angle=270),
+                plot.title   = element_text(size = 9, hjust  =  0),
+                legend.title = element_text(size = 9),
+                legend.text  = element_text(size = 8)				
+        ), 
+        scale_x_continuous(expand = c(0,0)),
+        scale_y_continuous(expand=c(0,0)) )
