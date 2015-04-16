@@ -5,7 +5,7 @@
 \title{Scalebar for ggplot}
 \usage{
 SCALE(ras = NULL, len = 10000, yoff = 0.6, xoff = 0.2, sdist = 800,
-  tdist = 1000, size = 1, col = "white")
+  tdist = 1000, size = 1, tsize = 3, col = "white")
 }
 \arguments{
 \item{ras}{Raster*}
@@ -21,6 +21,8 @@ SCALE(ras = NULL, len = 10000, yoff = 0.6, xoff = 0.2, sdist = 800,
 \item{tdist}{Numeric. Distance text from ticks.}
 
 \item{size}{Numeric. Thickness of scalebar}
+
+\item{tsize}{Numeric. Text size.}
 
 \item{col}{Color of scalebar and text}
 }

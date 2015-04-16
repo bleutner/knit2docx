@@ -18,8 +18,7 @@ ggRx <- function(x, layer = 1, maxpixels = 5000000, lowColor = "white", highColo
     
     if(ggObj) {p <- ggplot(df) + geom_raster(aes_string(x = "x", y = "y", fill = layer)) +
                 scale_fill_gradient(low = lowColor, high = highColor, na.value = NA, name = legendName) +
-                coord_equal() +
-                MAPTHEME
+                coord_equal() 
     } else {
         p <- df
     }
@@ -37,9 +36,10 @@ ggRx <- function(x, layer = 1, maxpixels = 5000000, lowColor = "white", highColo
 #' @param sdist Numeric. Length of ticks
 #' @param tdist Numeric. Distance text from ticks.
 #' @param size Numeric. Thickness of scalebar
+#' @param tsize Numeric. Text size.
 #' @param col Color of scalebar and text
 #' @export 
-SCALE <- function(ras = NULL, len = 10000, yoff = 0.6, xoff = 0.2, sdist = 800, tdist = 1000, size = 1, col = "white"){
+SCALE <- function(ras = NULL, len = 10000, yoff = 0.6, xoff = 0.2, sdist = 800, tdist = 1000, size = 1, tsize = 3,col = "white"){
     if(is.null(ras)){
         ex <- new("Extent"
                 , xmin = 579765
@@ -55,10 +55,10 @@ SCALE <- function(ras = NULL, len = 10000, yoff = 0.6, xoff = 0.2, sdist = 800, 
     df <- data.frame(xf = ex@xmin*(1+xoff), xt = ex@xmin*(1+xoff) + len, y = ex@ymin * (1-yoff))
     df <- data.frame(x = rep(ex@xmin*(1+xoff),4) + c(0,0,len,len), y = rep(ex@ymin * (1-yoff),4) - c(sdist,0,0,sdist)) 
     
-    dft <- data.frame(x = range(df$x), y = min(df$y) - tdist, lab = paste0(c("","   "), c(0, len/1000), c(""," km"))) 
+    dft <- data.frame(x = range(df$x), y = min(df$y) - tdist, lab = paste0(c("","    "), c(0, len/1000), c(""," km"))) 
     
-    list(geom_line(data = df, aes(x=x, y=y), size = 2, col = col),
-            geom_text(data=dft, aes(x = x, y =y, label =lab), col = col) ) 
+    list(geom_line(data = df, aes(x=x, y=y), size = size, col = col),
+            geom_text(data=dft, aes(x = x, y =y, label =lab),size = tsize, col = col) ) 
 }
 
 
