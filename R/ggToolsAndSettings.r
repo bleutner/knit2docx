@@ -9,20 +9,20 @@
 #' 
 #' @export 
 ggRx <- function(x, layer = 1, maxpixels = 5000000, lowColor = "white", highColor = "black", legendName = "Legend", ggObj = TRUE) {    
-    
-    drast <- sampleRegular(x[[layer]], maxpixels, asRaster = TRUE)
-    df <- data.frame(coordinates(drast), drast[])
-    colnames(df) <- c("x", "y", names(x[[layer]]))
-    layer <- colnames(df)[3]
-    #  df <- melt(df, id.vars = c("x","y"))
-    
-    if(ggObj) {p <- ggplot(df) + geom_raster(aes_string(x = "x", y = "y", fill = layer)) +
-                scale_fill_gradient(low = lowColor, high = highColor, na.value = NA, name = legendName) +
-                coord_equal() 
-    } else {
-        p <- df
-    }
-    return(p)
+	
+	drast <- sampleRegular(x[[layer]], maxpixels, asRaster = TRUE)
+	df <- data.frame(coordinates(drast), drast[])
+	colnames(df) <- c("x", "y", names(x[[layer]]))
+	layer <- colnames(df)[3]
+	#  df <- melt(df, id.vars = c("x","y"))
+	
+	if(ggObj) {p <- ggplot(df) + geom_raster(aes_string(x = "x", y = "y", fill = layer)) +
+				scale_fill_gradient(low = lowColor, high = highColor, na.value = NA, name = legendName) +
+				coord_equal() 
+	} else {
+		p <- df
+	}
+	return(p)
 }
 
 
@@ -40,25 +40,25 @@ ggRx <- function(x, layer = 1, maxpixels = 5000000, lowColor = "white", highColo
 #' @param col Color of scalebar and text
 #' @export 
 SCALE <- function(ras = NULL, len = 10000, yoff = 0.6, xoff = 0.2, sdist = 800, tdist = 1000, size = 1, tsize = 3,col = "white"){
-    if(is.null(ras)){
-        ex <- new("Extent"
-                , xmin = 579765
-                , xmax = 668775
-                , ymin = -522705
-                , ymax = -477735
-        )
-    } else {
-        ex <- extent(ras)
-    }
-    xoff <- xoff/100
-    yoff <- yoff/100
-    df <- data.frame(xf = ex@xmin*(1+xoff), xt = ex@xmin*(1+xoff) + len, y = ex@ymin * (1-yoff))
-    df <- data.frame(x = rep(ex@xmin*(1+xoff),4) + c(0,0,len,len), y = rep(ex@ymin * (1-yoff),4) - c(sdist,0,0,sdist)) 
-    
-    dft <- data.frame(x = range(df$x), y = min(df$y) - tdist, lab = paste0(c("","    "), c(0, len/1000), c(""," km"))) 
-    
-    list(geom_line(data = df, aes(x=x, y=y), size = size, col = col),
-            geom_text(data=dft, aes(x = x, y =y, label =lab),size = tsize, col = col) ) 
+	if(is.null(ras)){
+		ex <- new("Extent"
+				, xmin = 579765
+				, xmax = 668775
+				, ymin = -522705
+				, ymax = -477735
+		)
+	} else {
+		ex <- extent(ras)
+	}
+	xoff <- xoff/100
+	yoff <- yoff/100
+	df <- data.frame(xf = ex@xmin*(1+xoff), xt = ex@xmin*(1+xoff) + len, y = ex@ymin * (1-yoff))
+	df <- data.frame(x = rep(ex@xmin*(1+xoff),4) + c(0,0,len,len), y = rep(ex@ymin * (1-yoff),4) - c(sdist,0,0,sdist)) 
+	
+	dft <- data.frame(x = range(df$x), y = min(df$y) - tdist, lab = paste0(c("","    "), c(0, len/1000), c(""," km"))) 
+	
+	list(geom_line(data = df, aes(x=x, y=y), size = size, col = col),
+			geom_text(data=dft, aes(x = x, y =y, label =lab),size = tsize, col = col) ) 
 }
 
 
@@ -67,18 +67,19 @@ SCALE <- function(ras = NULL, len = 10000, yoff = 0.6, xoff = 0.2, sdist = 800, 
 #' Theme for map plotting
 #' @export 
 MAPTHEME <- list(
-        theme(
-                axis.title.y = element_blank(),
-                axis.title.x = element_blank(),
-                axis.text.x  = element_text(size=8, colour="grey50"),
-                axis.text.y  = element_text(angle=90, size=8, colour="grey50"),
-                axis.ticks    = element_line(colour = "grey50"),
-                axis.ticks.length = unit(0.06, "cm"),
-                strip.text.x = element_text(size = 8),
-                strip.text.y = element_text(size = 8, angle=270),
-                plot.title   = element_text(size = 9, hjust  =  0),
-                legend.title = element_text(size = 9),
-                legend.text  = element_text(size = 8)				
-        ), 
-        scale_x_continuous(expand = c(0,0)),
-        scale_y_continuous(expand=c(0,0)) )
+		theme(
+				axis.title.y = element_blank(),
+				axis.title.x = element_blank(),
+				axis.text.x  = element_text(size=9, colour="grey30"),
+				axis.text.y  = element_text(angle=90, size=9, colour="grey30"),
+				axis.ticks    = element_line(colour = "grey30"),
+				axis.ticks.length = unit(0.06, "cm"),
+				strip.text.x = element_text(size = 8),
+				strip.text.y = element_text(size = 8, angle=270),
+				plot.title   = element_text(size = 9, hjust  =  0),
+				legend.title = element_text(size = 9),
+				legend.text  = element_text(size = 8),
+				plot.margin = unit(c(0,0,0,0),"lines")
+		), 
+		scale_x_continuous(expand = c(0,0)),
+		scale_y_continuous(expand=c(0,0)) )
