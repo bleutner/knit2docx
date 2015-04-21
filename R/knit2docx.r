@@ -26,7 +26,7 @@
 #' }
 #'  
 knit2docx <- function(.fileBasename, .docxFile = NULL, .withBibliography = TRUE, .bibFile = NULL,  .bibStyle = "harvard1_mod.csl"){
-    
+    library(ggplot2)
     .rmdFile <- paste0(.fileBasename, ".Rmd")
     .mdFile  <- paste0(.fileBasename, ".md")
     if(is.null(.docxFile)) .docxFile <- paste0(.fileBasename, ".docx")
@@ -73,6 +73,7 @@ knit2docx <- function(.fileBasename, .docxFile = NULL, .withBibliography = TRUE,
     if(length(line)>0){ message("knitr_settings.Rmd is ignored in knit2docx but required if you run knitr::knit2html.\nSettings in here don't affect the docx file.")
         .rmdLoaded[line] <- gsub("\\}", ",eval=FALSE\\}", .rmdLoaded[line])
     }
+    theme_set(theme_bw())
     
     ## Knit to markdown 
     knit(text = .rmdLoaded, output = .mdFile)
