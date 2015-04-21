@@ -5,7 +5,7 @@
 \alias{MAPTHEME}
 \title{Theme for map plotting}
 \format{\preformatted{List of 3
- $ :List of 11
+ $ :List of 12
   ..$ axis.title.y     : list()
   .. ..- attr(*, "class")= chr [1:2] "element_blank" "element"
   ..$ axis.title.x     : list()
@@ -13,8 +13,8 @@
   ..$ axis.text.x      :List of 8
   .. ..$ family    : NULL
   .. ..$ face      : NULL
-  .. ..$ colour    : chr "grey50"
-  .. ..$ size      : num 8
+  .. ..$ colour    : chr "grey30"
+  .. ..$ size      : num 9
   .. ..$ hjust     : NULL
   .. ..$ vjust     : NULL
   .. ..$ angle     : NULL
@@ -23,15 +23,15 @@
   ..$ axis.text.y      :List of 8
   .. ..$ family    : NULL
   .. ..$ face      : NULL
-  .. ..$ colour    : chr "grey50"
-  .. ..$ size      : num 8
+  .. ..$ colour    : chr "grey30"
+  .. ..$ size      : num 9
   .. ..$ hjust     : NULL
   .. ..$ vjust     : NULL
   .. ..$ angle     : num 90
   .. ..$ lineheight: NULL
   .. ..- attr(*, "class")= chr [1:2] "element_text" "element"
   ..$ axis.ticks       :List of 4
-  .. ..$ colour  : chr "grey50"
+  .. ..$ colour  : chr "grey30"
   .. ..$ size    : NULL
   .. ..$ linetype: NULL
   .. ..$ lineend : NULL
@@ -89,6 +89,9 @@
   .. ..$ angle     : NULL
   .. ..$ lineheight: NULL
   .. ..- attr(*, "class")= chr [1:2] "element_text" "element"
+  ..$ plot.margin      :Class 'unit'  atomic [1:4] 0 0 0 0
+  .. .. ..- attr(*, "unit")= chr "lines"
+  .. .. ..- attr(*, "valid.unit")= int 3
   ..- attr(*, "class")= chr [1:2] "theme" "gg"
   ..- attr(*, "complete")= logi FALSE
  $ :List of 17
