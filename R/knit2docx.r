@@ -85,7 +85,7 @@ knit2docx <- function(.fileBasename, .docxFile = NULL, .withBibliography = TRUE,
     ## Copy external files to 'figure' folder #######################
     fix <- grep("^.*\\(external/", .md_internal)
     if(length(fix) > 0){
-        exFile <- inFile <- str_trim(str_replace(basename(.md_internal[fix]),")",""))
+        exFile <- inFile <- str_trim(str_replace(basename(.md_internal[fix]),"\\)",""))
         ## Check if files actually exist
         if(any(!file.exists(paste0("external/",exFile)))) stop(paste0("File external/", exFile[!file.exists(paste0("external/",exFile))], " does not exist!"), call. = FALSE)       
         ## Add some stuff to keep unique (in randomness we trust our lazy soul)
@@ -103,7 +103,7 @@ knit2docx <- function(.fileBasename, .docxFile = NULL, .withBibliography = TRUE,
         if(any(str_count(.md_internal[fix], "\\[Fig") > 1)) stop ("Execution halted! Each plot must be generated in a separate chunk. No chunk should produce two plots.", call. = FALSE)
         
         g   <- .md_internal[fix]
-        bn <- str_replace(basename(g), ")", "")
+        bn <- str_replace(basename(g), "\\)", "")
         filedot <- lapply(lapply(str_locate_all(bn, pattern = "\\."), max),"-",1)
         fbase <- substring(bn, 1, filedot)
         numb  <- sapply(str_split(substr(g,7,11)," "),"[",1)
